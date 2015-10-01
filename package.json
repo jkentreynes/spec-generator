@@ -20,6 +20,7 @@
     "bluebird": "^2.10.1",
     "glob": "^5.0.15",
     "handlebars": "^4.0.3",
+    "handlebars-helpers": "^0.5.8",
     "lodash": "^3.10.1"
   }
 }
