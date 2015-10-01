@@ -47,7 +47,7 @@ function getTemplate ( scenario ) {
 }
 
 function getTemplates() {
-	  return glob( config.ddTemplates + '**/*.js', { ignore : config.ddTemplates + '**/partials/**/*.js' } )
+	  return glob( config.ddTemplates + '/**/*.js', { ignore : config.ddTemplates + '/**/partials/**/*.js' } )
 		.then( function ( files, err ) {
 			templates = files;
 			return;
@@ -55,7 +55,7 @@ function getTemplates() {
 }
 
 function registerPartials () {
-	return glob( config.ddTemplates + '**/partials/**/*.js' )
+	return glob( config.ddTemplates + '/**/partials/**/*.js' )
 		.then ( function ( files, err ) {
 			_.forEach( files, function ( element ) {
 				handlebars.registerPartial( generateName( element.split( '/' ), 'partial' ), fs.readFileSync( element, 'utf8' ) );
@@ -70,7 +70,7 @@ function initialize () {
 		.then( registerPartials );
 }
 
-module.exports = function ( options, callback ) {
+module.exports = function ( options ) {
 	var spec;
 	var jsonData;
 
@@ -81,17 +81,19 @@ module.exports = function ( options, callback ) {
 			require( './node_modules/handlebars-helpers/lib/helper-lib.js' ).register( handlebars, {} );
 
 			_.forEach( jsonFiles, function ( element, index ) {
-				jsonData = require( element );
 
+				jsonData = require( process.cwd() + element.substr(1,element.length) );
 				spec = handlebars.compile( fs.readFileSync( getTemplate ( jsonData.scenario ), 'utf8' ) );
+
 				try {
-					fs.mkdirSync( config.ddGeneratedSpecs + jsonData.scenario );
-					fs.mkdirSync( config.ddGeneratedSpecs + jsonData.scenario + '/' + jsonData.scenarioType );
-					fs.writeFileSync( config.ddGeneratedSpecs + jsonData.scenario + '/' + jsonData.scenarioType + '/' + jsonData.scenario + jsonData.scenarioId + '.spec.js', spec( jsonData ) );
-				} catch( err ){
+					fs.mkdirSync( config.ddGeneratedSpecs + '/' + jsonData.scenario );
+					fs.mkdirSync( config.ddGeneratedSpecs + '/' + jsonData.scenario + '/' + jsonData.scenarioType );
+				}
+				catch( err ){
 					console.log( err );
 				}
+
+				fs.writeFileSync( config.ddGeneratedSpecs + '/' +  jsonData.scenario + '/' + jsonData.scenarioType + '/' + jsonData.scenario + jsonData.scenarioId + '.spec.js', spec( jsonData ) );
 			} );
-			callback();
 		} );
-};
+}
