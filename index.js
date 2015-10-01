@@ -70,7 +70,7 @@ function initialize () {
 		.then( registerPartials );
 }
 
-module.exports = ( function ( options ) {
+module.exports = function ( options, callback ) {
 	var spec;
 	var jsonData;
 
@@ -84,16 +84,14 @@ module.exports = ( function ( options ) {
 				jsonData = require( element );
 
 				spec = handlebars.compile( fs.readFileSync( getTemplate ( jsonData.scenario ), 'utf8' ) );
-
 				try {
 					fs.mkdirSync( config.ddGeneratedSpecs + jsonData.scenario );
 					fs.mkdirSync( config.ddGeneratedSpecs + jsonData.scenario + '/' + jsonData.scenarioType );
-				}
-				catch( err ){
+					fs.writeFileSync( config.ddGeneratedSpecs + jsonData.scenario + '/' + jsonData.scenarioType + '/' + jsonData.scenario + jsonData.scenarioId + '.spec.js', spec( jsonData ) );
+				} catch( err ){
 					console.log( err );
 				}
-
-				fs.writeFileSync( config.ddGeneratedSpecs + jsonData.scenario + '/' + jsonData.scenarioType + '/' + jsonData.scenario + jsonData.scenarioId + '.spec.js', spec( jsonData ) );
 			} );
+			callback();
 		} );
-} ) ();
+};
