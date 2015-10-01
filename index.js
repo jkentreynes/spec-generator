@@ -74,7 +74,7 @@ module.exports = function ( options, callback ) {
 	var spec;
 	var jsonData;
 
-	config = require( options );
+	config = options;
 
 	initialize()
 		.then( function () {
