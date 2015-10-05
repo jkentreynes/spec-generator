@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var SpecGenerator = require( './index.js' );
 
 ( function () {
