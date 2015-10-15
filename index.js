@@ -21,7 +21,6 @@ function globber ( pattern, options, fileKind ) {
 		}
 		return files;
 	} );
-
 }
 
 function generateName ( filePath ) {
