@@ -18,6 +18,7 @@
   "homepage": "https://github.com/jkentreynes/spec-generator#readme",
   "dependencies": {
     "bluebird": "^2.10.1",
+    "fs-extra": "^0.26.0",
     "glob": "^5.0.15",
     "handlebars": "^4.0.3",
     "handlebars-helpers": "^0.5.8",
