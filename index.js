@@ -12,12 +12,12 @@ require( './node_modules/handlebars-helpers/lib/helper-lib.js' ).register( handl
 
 const partialsPath = '/partials/**/*.hbs';
 
-function globber ( pattern, options ) {
+function globber ( pattern, options, fileKind ) {
 	options = options || {};
 
 	return glob( pattern, options ).then( function ( files ) {
 		if ( files.length === 0 ) {
-			throw new Error( 'files not found: ' + pattern );
+			throw new Error( fileKind + ' files not found: ' + pattern );
 		}
 		return files;
 	} );
@@ -35,9 +35,9 @@ function getTemplate ( templates, scenario ) {
 }
 
 function getTemplates ( path ) {
-	const options =  { 'ignore' : path + '/**/partials/**/*.js' };
+	const options =  { 'ignore' : path + '/**/partials/**/*.hbs' };
 
-	return globber( path + '/**/*.js', options );
+	return globber( path + '/**/*.hbs', options, 'templates' );
 }
 
 function registerPartials ( path ) {
@@ -59,7 +59,7 @@ function registerPartials ( path ) {
 		return _.camelCase( partialPath );
 	}
 
-	return globber( path + '/**/partials/**/*.js' )
+	return globber( path + '/**/partials/**/*.hbs', 'partials' )
 		.then ( function ( files, err ) {
 			if( err ) {
 				throw( err );
@@ -96,14 +96,16 @@ function SpecGenerator ( options ) {
 									].join('');
 
 					var generatedSpecName = [
-												options.jsonData.scenario,
 												options.jsonData.scenarioId,
+												options.jsonData.scenario,
 												'.spec.js'
 											].join( '' );
 
-					fs.outputFileSync( generatedSpecPath + generatedSpecName, spec);
-				// } );
-					resolve( 'sucessfully generated spec files' );
+					const generatedSpec = generatedSpecPath + generatedSpecName;
+
+					fs.outputFileSync( generatedSpec, spec);
+
+					resolve( generatedSpec );
 		} )
 		.catch( function ( err ) {
 			reject( err );
